@@ -60,7 +60,7 @@ waveguide_type_delay='Si routing TE 1310 nm (compound waveguide)'
 
 # Load cells from library
 cell_ebeam_gc = ly.create_cell('GC_TE_1310_8degOxide_BB', tech_name)
-cell_ebeam_y = ly.create_cell('ebeam_y_1310', 'EBeam_Beta')
+cell_ebeam_y = ly.create_cell('ebeam_y_1310', 'EBeam')
 
 # define parameters for the designs
 params_BraggN = [40, 50, 60, 70]
@@ -99,7 +99,7 @@ for i in range(0,4):
     # automated test label
     text = Text ("opt_in_TE_1310_device_%s_BraggMMcavity%s" % (designer_name, params_BraggN[i]), t)
     cell.shapes(ly.layer(ly.TECHNOLOGY['Text'])).insert(text).text_size = 5/dbu
-    
+        
     # Y branches:
     instY1 = connect_cell(instGC3, 'opt1', cell_ebeam_y, 'opt3')
     instY1.transform(Trans(10000,0))
@@ -130,3 +130,5 @@ path = os.path.dirname(os.path.realpath(__file__))
 filename = os.path.splitext(os.path.basename(__file__))[0]
 file_out = export_layout(topcell, path, filename, relative_path = '..', format='oas', screenshot=False)
 
+# KLayout live
+topcell.show()
