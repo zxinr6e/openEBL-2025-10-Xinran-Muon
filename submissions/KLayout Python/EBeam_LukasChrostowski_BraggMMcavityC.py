@@ -61,7 +61,7 @@ waveguide_type_delay='Si routing TE 1550 nm (compound waveguide)'
 # Load cells from library
 cell_ebeam_gc = ly.create_cell('GC_TE_1550_8degOxide_BB', tech_name)
 cell_ebeam_y = ly.create_cell('ebeam_y_1550', tech_name)
-
+ 
 # define parameters for the designs
 params_BraggN = [6, 7, 8, 9]
 

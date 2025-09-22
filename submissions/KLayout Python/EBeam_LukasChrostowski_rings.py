@@ -6,7 +6,7 @@ by Lukas Chrostowski, 2025
 
 - Silicon waveguides
 - Several ring resonators with different radii and gap
- 
+  
 Use instructions:
 
 Run in Python, e.g., VSCode
