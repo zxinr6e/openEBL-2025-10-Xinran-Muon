@@ -257,6 +257,7 @@ jobs:
           git config user.email "github-actions@github.com"
 
           mkdir -p submissions
+          mkdir -p submissions/circuit_simulations
           cp ../output/*.png submissions/circuit_simulations/ || echo "No PNGs found"
 
           echo "git add"
