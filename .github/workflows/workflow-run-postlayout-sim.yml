@@ -103,12 +103,13 @@ jobs:
             Port 7743
             StrictHostKeyChecking no
             UserKnownHostsFile=/dev/null
-
+            ForwardAgent yes
           Host baker
             User lukasc
             ProxyJump turing
             StrictHostKeyChecking no
             UserKnownHostsFile=/dev/null
+            ForwardAgent yes
           EOF
 
           chmod 600 ~/.ssh/config
