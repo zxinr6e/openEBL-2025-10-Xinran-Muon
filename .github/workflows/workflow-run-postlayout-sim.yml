@@ -190,8 +190,11 @@ jobs:
 
             # 5 min time limit
             timeout 300s ssh baker "cd simulations && python3 run_circuit_simulation.py $USERNAME/$FILE_BASENAME" \
-              > sim_stdout.txt 2> sim_stderr.txt
-            RET_CODE=$?
+              | tee sim_stdout.txt
+            RET_CODE=${PIPESTATUS[0]}  # capture ssh return code with pipe
+            # RET_CODE=$?
+
+            echo "SSH return code: $RET_CODE"
 
             if [ $RET_CODE -eq 124 ]; then
               echo "❌ SSH command timed out."
@@ -199,8 +202,9 @@ jobs:
 
             echo "Fetching new output files from Baker..."
             timeout 60s rsync -avz --ignore-existing --update baker:simulations/$USERNAME/ ./output/
-
-            if [ $RET_CODE -eq 124 ]; then
+            RSYNC_RET=$?
+          
+            if [ $RSYNC_RET -eq 124 ]; then
               echo "❌ rsync command timed out."
             fi
 
