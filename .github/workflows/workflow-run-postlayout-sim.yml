@@ -179,7 +179,9 @@ jobs:
           echo "Running remote simulation for $USERNAME"
 
           echo "Formatting comment..."
-          echo "This is an experimental feature. The goal is to run a circuit simulation on the design, and return the results for human verification." > comment.txt
+
+          echo "This is an experimental feature.  The goal is to run a circuit simulation on the design, and return the results for human verification." > comment.txt
+          echo "" >> comment.txt
 
           for file in $FILE_LIST; do
             FILE_BASENAME=$(basename "$file")
@@ -277,50 +279,32 @@ jobs:
           echo "📸 Simulation result image(s):" >> comment.txt
           BRANCH_NAME="${{ github.event.workflow_run.head_branch }}"
           FORK_REPO="${{ steps.getpr.outputs.fork_repo }}"
+          
           for img in output/*.png; do
             [ -f "$img" ] || continue
             FILENAME=$(basename "$img")
             echo "![${FILENAME}](https://github.com/${FORK_REPO}/blob/${BRANCH_NAME}/submissions/circuit_simulations/${FILENAME}?raw=true)" >> comment.txt
           done
           echo "" >> comment.txt
+
           # echo "_To re-run this simulation, comment **please resimulate** below._" >> comment.txt  # not working
+
           echo "_To re-run this simulation, please make a change to the layout file (simply running V verification will change the date stamp in the layout), save it, and upload it to your GitHub fork. This will trigger this simulation to run again._" >> comment.txt
           echo "" >> comment.txt
-          echo "_We have implemented automated computation of the ebeam-dc-halfring-straight s-parameters, for TE 1550. If the parameters chosen in the design were missing, a simulation job was submitted, and the CML on the server will be automatically updated, and available on for future circuit simulations._" >> comment.txt
+
+          echo " I hereby grant you permission to use these plots for inclusion in a course report." >> comment.txt
           echo "" >> comment.txt
+
+          #echo "_We have implemented automated computation of the ebeam-dc-halfring-straight s-parameters, for TE 1550. If the parameters chosen in the design were missing, a simulation job was submitted, and the CML on the server will be automatically updated, and available on for future circuit simulations._" >> comment.txt
+          #echo "" >> comment.txt
           
-
-      # - name: Delete previous simulation comment
-      #   if: steps.check_files.outputs.found == 'true'
-      #   run: |
-      #     PR_NUMBER="${{ steps.getpr.outputs.pr_number }}"
-
-      #     echo "Checking for previous simulation comment on PR #$PR_NUMBER"
-      #     COMMENTS=$(gh pr view "$PR_NUMBER" --comments --json comments -q '.comments[] | {id: .id, body: .body}' | jq -c '.')
-
-      #     DELETE_COMMENT_ID=$(echo "$COMMENTS" | jq -r 'select(.body | contains("✅ Simulation results for")) | .id' | tail -n1)
-
-      #     if [ -n "$DELETE_COMMENT_ID" ]; then
-      #       echo "Deleting previous comment with ID: $DELETE_COMMENT_ID"
-      #       gh issue comment delete "$DELETE_COMMENT_ID" --repo "${{ github.repository }}" --yes
-      #       # gh api repos/${{ github.repository }}/issues/comments/$DELETE_COMMENT_ID -X DELETE
-      #       RET_CODE=$?
-      #       if [ $RET_CODE -ne 0 ]; then
-      #         echo "Error with gh command"
-      #       fi
-      #     else
-      #       echo "No previous simulation comment found."
-      #     fi
-      #   env:
-      #     GH_TOKEN: ${{ secrets.PAT }}
-
       - name: Find existing simulation comment
         uses: peter-evans/find-comment@v3  
         if: steps.check_files.outputs.found == 'true'
         id: fc
         with:
           issue-number: ${{ steps.getpr.outputs.pr_number }}
-          body-includes: "✅ Simulation results for"
+          body-includes: "This is an experimental feature.  The goal"
         env:
           GH_TOKEN: ${{ secrets.PAT }}
 
@@ -328,7 +312,7 @@ jobs:
         if: steps.fc.outputs.comment-id != ''
         run: |
           dt=$(TZ='America/Los_Angeles' date '+%Y-%m-%d %H:%M:%S %Z')
-          echo " - Simulation updated: $dt " >> comment.txt
+          echo " - Simulation date: $dt " >> comment.txt
               
       - name: Post simulation results as PR comment
         if: steps.check_files.outputs.found == 'true'
